@@ -78,7 +78,7 @@ public class ButtonsPanel extends JPanel {
 	
 	private void openImage() {
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("/Users/davidperezrivero/Downloads/Fotos"));
+		fileChooser.setCurrentDirectory(new File("/Users/"));
 		int result = fileChooser.showOpenDialog(this);
 		if (result == JFileChooser.APPROVE_OPTION) {
 		    File selectedFile = fileChooser.getSelectedFile();
