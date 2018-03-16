@@ -1,5 +1,7 @@
 package window.panels;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -7,11 +9,13 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import cellularAutomatons.cellularAutomaton1.CellularAutomaton1;
 import window.Window;
@@ -20,44 +24,63 @@ public class ButtonsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JButton openButton;
 	private JButton encrypt1Button;
-	private JButton encrypt2Button;
 	private JButton decrypt1Button;
-	private JButton decrypt2Button;
 	CellularAutomaton1 cellularAutomaton;
-	private static JComboBox roundsSelection;
-	private final Integer[] ROUNDS = { 1, 2, 3, 4};
+	private static JComboBox<Object> roundsSelection;
+	private static JComboBox<Object> radiusSelection;
+	private JSlider slider;
+	private final Integer[] ROUNDS = {1, 2, 3, 4};
+	private final int TTS_MIN = 0;
+	private final int TTS_MAX = 40;
+	private final int TTS_SPACING = 10;
+	private final String OPEN_TEXT = "Open Image...";
+	private final String ENCRYPT_TEXT = "Encrypt Image";
+	private final String DECRYPT_TEXT = "Decrypt Image";
+	private final String ROUNDS_TEXT = "Rounds:";
+	private final String RADIUS_TEXT = "Radius:";
+	private final String TTS_TEXT = "Time to Sleep:";
+	
 	
 	public ButtonsPanel() {
-		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		setLayout(new FlowLayout());
+		setBorder(BorderFactory.createLineBorder(Color.black));
+		setBackground(Color.LIGHT_GRAY);
 		inicializeComponents();
-		addButtons();
+		addComponents();
 		addListeners();
 		setDefaultVisibility();
 	}
 
 	private void inicializeComponents() {
-		openButton = new JButton("Abrir...");
-		encrypt1Button = new JButton("Encriptar Automata 1");
-		encrypt2Button = new JButton("Encriptar Automata 2");
-		decrypt1Button = new JButton("Desencriptar Encriptacion 1");
-		decrypt2Button = new JButton("Desencriptar Encriptacion 2");
-		roundsSelection = new JComboBox(ROUNDS);
+		openButton = new JButton(OPEN_TEXT);
+		encrypt1Button = new JButton(ENCRYPT_TEXT);
+		decrypt1Button = new JButton(DECRYPT_TEXT);
+		roundsSelection = new JComboBox<Object>(ROUNDS);
 		roundsSelection.setSelectedIndex(0);
+		radiusSelection = new JComboBox<Object>(ROUNDS);
+		radiusSelection.setSelectedIndex(0);
+		slider = new JSlider(JSlider.HORIZONTAL, TTS_MIN, TTS_MAX, TTS_MIN);
+		slider.setMajorTickSpacing(TTS_SPACING);
+		slider.setMinorTickSpacing(TTS_MIN);
+		slider.setPaintTicks(true);
+		slider.setPaintLabels(true);
 	}
 
-	private void addButtons() {
-		this.add(openButton);
-		this.add(encrypt1Button);
-		this.add(encrypt2Button);
-		this.add(decrypt1Button);
-		this.add(roundsSelection);
+	private void addComponents() {
+		add(openButton);
+		add(encrypt1Button);
+		add(decrypt1Button);
+		add(new JLabel(ROUNDS_TEXT));
+		add(roundsSelection);
+		add(new JLabel(RADIUS_TEXT));
+		add(radiusSelection);
+		add(new JLabel(TTS_TEXT));
+		add(slider);
 	}
-	
+
 	private void setDefaultVisibility() {
 		encrypt1Button.setEnabled(false);
-		encrypt2Button.setEnabled(false);
 		decrypt1Button.setEnabled(false);
-		decrypt2Button.setEnabled(false);
 		this.repaint();
 	}
 	
@@ -89,7 +112,6 @@ public class ButtonsPanel extends JPanel {
 				} else {
 					Window.openImage(image);
 					encrypt1Button.setEnabled(true);
-					encrypt2Button.setEnabled(true);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -102,27 +124,14 @@ public class ButtonsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cellularAutomaton = new CellularAutomaton1((BufferedImage) ImagePanel.image, 
-						ROUNDS[roundsSelection.getSelectedIndex()]);
+						ROUNDS[roundsSelection.getSelectedIndex()],
+						ROUNDS[radiusSelection.getSelectedIndex()],
+						slider.getValue());
 				cellularAutomaton.encrypt();
-				encrypt(1);
+				encrypt1Button.setEnabled(false);
+				decrypt1Button.setEnabled(true);
 			}
 		});
-		encrypt2Button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				encrypt(2);
-			}
-		});
-	}
-	
-	private void encrypt(int opt) {
-		encrypt1Button.setEnabled(false);
-		encrypt2Button.setEnabled(false);
-		if (opt == 1) {
-			decrypt1Button.setEnabled(true);
-		} else {
-			decrypt2Button.setEnabled(true);
-		}
 	}
 	
 	private void addDecryptButtonListener() {
@@ -133,18 +142,10 @@ public class ButtonsPanel extends JPanel {
 				decryptImage();
 			}
 		});
-		decrypt2Button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				decryptImage();
-			}
-		});
 	}
 	
 	private void decryptImage() {
 		encrypt1Button.setEnabled(true);
-		encrypt2Button.setEnabled(true);
-		decrypt2Button.setEnabled(false);
 		decrypt1Button.setEnabled(false);
 	}
 	

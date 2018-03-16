@@ -34,7 +34,7 @@ public class Window extends JFrame {
 	private void inicializeComponents() {
 		buttonsPanel = new ButtonsPanel();
 		imagePanel = new ImagePanel();
-		this.add(buttonsPanel, BorderLayout.EAST);
+		this.add(buttonsPanel, BorderLayout.NORTH);
 		this.add(imagePanel, BorderLayout.CENTER);
 	}
 

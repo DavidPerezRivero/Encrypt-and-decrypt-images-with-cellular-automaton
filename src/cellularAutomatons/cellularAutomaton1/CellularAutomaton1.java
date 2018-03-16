@@ -15,29 +15,20 @@ public class CellularAutomaton1 extends CellularAutomaton {
 	int[][] bitInit;
 	int[][] nextState;
 	int ROUNDS;
-	final int RADIUS = 1;
+	int RADIUS;
+	int TTS;
 	ArrayList<Integer> deadCell;
 	ArrayList<Integer> aliveCell;
-	
-	
-	ArrayList<int[][]> a;
-	ArrayList<BufferedImage> b;
-	ArrayList<Integer> c;
-	ArrayList<ArrayList<Integer>> d;
 
-	public CellularAutomaton1(BufferedImage image, int rounds) {
+	public CellularAutomaton1(BufferedImage image, int rounds, int radius, int tts) {
 		m = image.getWidth();
 		n = image.getHeight();
 		bitInit = new int[m][n];
 		nextState = new int[m][n];
 		ROUNDS = rounds;
+		RADIUS = radius;
+		TTS = tts;
 		this.image = copyImage(image);
-		
-		
-		a = new ArrayList<>();
-		b = new ArrayList<>();
-		c = new ArrayList<>();
-		d = new ArrayList<>();
 	}
 
 	private BufferedImage copyImage(BufferedImage img) {
@@ -90,9 +81,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 							}
 						}
 					}
-					c.add(aliveCell.size());
 					bitInit = copyState(bitInit, nextState);
-					a.add(bitInit);
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							if (!aliveCell.isEmpty()) {
@@ -103,7 +92,6 @@ public class CellularAutomaton1 extends CellularAutomaton {
 						}
 					}
 					setImage(copyImage(image));
-					b.add(copyImage(image));
 				}
 			}
 		});
@@ -115,7 +103,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 			for (int j = 0; j < n; j++) {
 				ImagePanel.image.setRGB(i, j, image.getRGB(i, j));
 				try {
-					Thread.sleep(1);
+					Thread.sleep(TTS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -156,12 +144,10 @@ public class CellularAutomaton1 extends CellularAutomaton {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("--------------NEW DECRYPT----------------");
 				getStates();
 				getImage();
 			}
 
-			// los valores image y colors solo son correctos para ROUNDS - 1
 			private void getStates() {
 				generateRandomMatrix();
 				nextState = new int[m][n];
@@ -179,7 +165,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 
 			private void getImage() {
 				for (int k = 0; k < ROUNDS; k++) {
-					State state = states.get(ROUNDS - 1 - k);
+				State state = states.get(ROUNDS - 1 - k);
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							state.getColors().add(image.getRGB(i, j));
@@ -204,47 +190,6 @@ public class CellularAutomaton1 extends CellularAutomaton {
 					setImage(copyImage(image));
 					state.setImage(copyImage(image));
 				}
-				
-////////////////////////////////////////////////////////////////////////////////////////////DEBUG
-				boolean estado;
-				for (int k = 0; k < ROUNDS; k++) {
-					estado = true;
-					for (int i = 0; i < m; i++) {
-						for (int j = 0; j < n; j++) {
-							if (states.get(k).getState()[i][j] != a.get(k)[i][j]) {
-								estado = false;
-							}
-						}
-					}
-					if (estado) {
-						System.out.println("Estado " + k + " correcto.");
-					} else {
-						System.out.println("ERROR EN EL ESTADO " + k);
-					}
-				}
-				for (int k = 0; k < ROUNDS; k++) {
-					if (states.get(k).getCount() != c.get(k)) {
-						System.out.println("Error en el contador " + k);
-					} else {
-						System.out.println("Contador "+k+" correcto");
-					}
-				}
-				for (int k = 0; k < ROUNDS; k++) {
-					boolean im = true;
-					for (int i = 0; i < m; i++) {
-						for (int j = 0; j < n; j++) {
-							if (states.get(k).getImage().getRGB(i, j) != b.get(k).getRGB(i, j)) {
-								im = false;
-							}
-						}
-					}
-					if (im) {
-						System.out.println("Image " + k + " correcta.");
-					} else {
-						System.out.println("Error en la imagen " + k + ".");
-					}
-				}
-////////////////////////////////////////////////////////////////////////////////////////////
 			}
 		});
 		t.start();
