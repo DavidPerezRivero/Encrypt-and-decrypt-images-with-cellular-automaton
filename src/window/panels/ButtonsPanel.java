@@ -16,15 +16,17 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import cellularAutomatons.cellularAutomaton1.CellularAutomaton1;
 import window.Window;
 
 public class ButtonsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JButton openButton;
-	private JButton encrypt1Button;
-	private JButton decrypt1Button;
+	private static JButton openButton;
+	private static JButton encrypt1Button;
+	private static JButton decrypt1Button;
 	CellularAutomaton1 cellularAutomaton;
 	private static JComboBox<Object> roundsSelection;
 	private static JComboBox<Object> radiusSelection;
@@ -88,6 +90,7 @@ public class ButtonsPanel extends JPanel {
 		addOpenButtonListener();
 		addEncryptButtonListener();
 		addDecryptButtonListener();
+		addSliderListener();
 	}
 
 	private void addOpenButtonListener() {
@@ -127,11 +130,15 @@ public class ButtonsPanel extends JPanel {
 						ROUNDS[roundsSelection.getSelectedIndex()],
 						ROUNDS[radiusSelection.getSelectedIndex()],
 						slider.getValue());
-				cellularAutomaton.encrypt();
 				encrypt1Button.setEnabled(false);
-				decrypt1Button.setEnabled(true);
+				openButton.setEnabled(false);
+				cellularAutomaton.encrypt();
 			}
 		});
+	}
+	
+	public static void finishEncrypt() {
+		decrypt1Button.setEnabled(true);
 	}
 	
 	private void addDecryptButtonListener() {
@@ -139,14 +146,22 @@ public class ButtonsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cellularAutomaton.decrypt();
-				decryptImage();
+				decrypt1Button.setEnabled(false);
 			}
 		});
 	}
 	
-	private void decryptImage() {
+	public static void finishDecrypt() {
 		encrypt1Button.setEnabled(true);
-		decrypt1Button.setEnabled(false);
+		openButton.setEnabled(true);
 	}
 	
+	private void addSliderListener() {
+		slider.addChangeListener(new ChangeListener () {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				CellularAutomaton1.TTS = slider.getValue();
+			}
+		});
+	}
 }

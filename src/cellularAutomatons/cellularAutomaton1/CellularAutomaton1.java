@@ -6,6 +6,7 @@ import java.util.Random;
 
 import cellularAutomatons.CellularAutomaton;
 import cellularAutomatons.State;
+import window.panels.ButtonsPanel;
 import window.panels.ImagePanel;
 
 public class CellularAutomaton1 extends CellularAutomaton {
@@ -16,7 +17,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 	int[][] nextState;
 	int ROUNDS;
 	int RADIUS;
-	int TTS;
+	public static int TTS;
 	ArrayList<Integer> deadCell;
 	ArrayList<Integer> aliveCell;
 
@@ -93,6 +94,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 					}
 					setImage(copyImage(image));
 				}
+				ButtonsPanel.finishEncrypt();
 			}
 		});
 		t.start();
@@ -146,6 +148,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 			public void run() {
 				getStates();
 				getImage();
+				ButtonsPanel.finishDecrypt();
 			}
 
 			private void getStates() {
