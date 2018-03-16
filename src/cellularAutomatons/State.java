@@ -1,19 +1,16 @@
 package cellularAutomatons;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class State {
 	private int[][] state;
 	private int count;
 	private ArrayList<Integer> colors;
-	private BufferedImage image;
 
-	public State(int[][] state, int count, ArrayList<Integer> colorCells, BufferedImage image) {
+	public State(int[][] state, int count, ArrayList<Integer> colorCells) {
 		this.state = state;
 		this.count = count;
 		this.colors = colorCells;
-		this.image = image;
 	}
 	
 	public ArrayList<Integer> getColors() {
@@ -46,18 +43,5 @@ public class State {
 
 	public void increaseCount() {
 		count++;
-	}
-
-	public BufferedImage getImage() {
-		return image;
-	}
-
-	public void setImage(BufferedImage image) {
-		this.image = new BufferedImage(image.getHeight(), image.getWidth(), image.getType());
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				this.image.setRGB(i, j, image.getRGB(i, j));
-			}
-		}
 	}
 }

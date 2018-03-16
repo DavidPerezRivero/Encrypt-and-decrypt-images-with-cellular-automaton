@@ -19,7 +19,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import cellularAutomatons.cellularAutomaton1.CellularAutomaton1;
+import cellularAutomatons.cellularAutomaton.CellularAutomaton;
 import window.Window;
 
 public class ButtonsPanel extends JPanel {
@@ -27,7 +27,7 @@ public class ButtonsPanel extends JPanel {
 	private static JButton openButton;
 	private static JButton encrypt1Button;
 	private static JButton decrypt1Button;
-	CellularAutomaton1 cellularAutomaton;
+	CellularAutomaton cellularAutomaton;
 	private static JComboBox<Object> roundsSelection;
 	private static JComboBox<Object> radiusSelection;
 	private JSlider slider;
@@ -126,7 +126,7 @@ public class ButtonsPanel extends JPanel {
 		encrypt1Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cellularAutomaton = new CellularAutomaton1((BufferedImage) ImagePanel.image, 
+				cellularAutomaton = new CellularAutomaton((BufferedImage) ImagePanel.image, 
 						ROUNDS[roundsSelection.getSelectedIndex()],
 						ROUNDS[radiusSelection.getSelectedIndex()],
 						slider.getValue());
@@ -160,7 +160,7 @@ public class ButtonsPanel extends JPanel {
 		slider.addChangeListener(new ChangeListener () {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				CellularAutomaton1.TTS = slider.getValue();
+				CellularAutomaton.TTS = slider.getValue();
 			}
 		});
 	}

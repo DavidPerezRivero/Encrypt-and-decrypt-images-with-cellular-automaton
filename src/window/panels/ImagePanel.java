@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import cellularAutomatons.cellularAutomaton1.CellularAutomaton1;
+import cellularAutomatons.cellularAutomaton.CellularAutomaton;
 
 public class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	public CellularAutomaton1 cellularAutomaton1;
+	public CellularAutomaton cellularAutomaton;
 	public static BufferedImage image;
 	
 	public ImagePanel() {

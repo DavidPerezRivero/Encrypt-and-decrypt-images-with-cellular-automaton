@@ -1,27 +1,25 @@
-package cellularAutomatons.cellularAutomaton1;
+package cellularAutomatons.cellularAutomaton;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
-import cellularAutomatons.CellularAutomaton;
+import cellularAutomatons.AbstractCellularAutomaton;
 import cellularAutomatons.State;
 import window.panels.ButtonsPanel;
 import window.panels.ImagePanel;
 
-public class CellularAutomaton1 extends CellularAutomaton {
-	BufferedImage image;
-	int m;
-	int n;
-	int[][] bitInit;
-	int[][] nextState;
-	int ROUNDS;
-	int RADIUS;
+public class CellularAutomaton extends AbstractCellularAutomaton {
+	private BufferedImage image;
+	private int m;
+	private int n;
+	private int[][] bitInit;
+	private int[][] nextState;
+	private int ROUNDS;
+	private int RADIUS;
 	public static int TTS;
-	ArrayList<Integer> deadCell;
-	ArrayList<Integer> aliveCell;
 
-	public CellularAutomaton1(BufferedImage image, int rounds, int radius, int tts) {
+	public CellularAutomaton(BufferedImage image, int rounds, int radius, int tts) {
 		m = image.getWidth();
 		n = image.getHeight();
 		bitInit = new int[m][n];
@@ -69,8 +67,8 @@ public class CellularAutomaton1 extends CellularAutomaton {
 			@Override
 			public void run() {
 				for (int k = 0; k < ROUNDS; k++) {
-					aliveCell = new ArrayList<Integer>();
-					deadCell = new ArrayList<Integer>();
+					ArrayList<Integer> aliveCell = new ArrayList<Integer>();
+					ArrayList<Integer> deadCell = new ArrayList<Integer>();
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							int alive = getNumOfNeighborsAlive(i, j);
@@ -162,7 +160,7 @@ public class CellularAutomaton1 extends CellularAutomaton {
 						}
 					}
 					bitInit = copyState(bitInit, nextState);
-					states.add(new State(bitInit, 0, new ArrayList<Integer>(), null));
+					states.add(new State(bitInit, 0, new ArrayList<Integer>()));
 				}
 			}
 
@@ -177,21 +175,17 @@ public class CellularAutomaton1 extends CellularAutomaton {
 							}							
 						}
 					}
-					int alive = 0;
-					int dead = state.getCount();
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							if (state.getState()[i][j] == 1) {
-								image.setRGB(i, j, state.getColors().get(alive));
-								alive++;
+								image.setRGB(i, j, state.getColors().remove(0));
+								state.decreaseCount();
 							} else {
-								image.setRGB(i, j, state.getColors().get(dead));
-								dead++;
+								image.setRGB(i, j, state.getColors().remove(state.getCount()));
 							}
 						}
 					}
 					setImage(copyImage(image));
-					state.setImage(copyImage(image));
 				}
 			}
 		});

@@ -12,6 +12,9 @@ public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private ButtonsPanel buttonsPanel;
 	public static ImagePanel imagePanel;
+	private final String CELLULAR_TEXT = "Encrypt/Decrypt images with Cellular Automaton";
+	private final int WINDOW_WIDTH = 1300;
+	private final int WINDOW_HEIGHT = 1000;
 	
 	public Window() {
 		super();
@@ -21,11 +24,11 @@ public class Window extends JFrame {
 	}
 
 	private void configureWindow() {
-		setTitle("Cellular Automaton");                                              
+		setTitle(CELLULAR_TEXT);                                              
         setResizable(true);       
         setVisible(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   
-        setSize(1300, 1000);  
+        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
         setLayout(new BorderLayout());  
         setLocationRelativeTo(null);  
 	}

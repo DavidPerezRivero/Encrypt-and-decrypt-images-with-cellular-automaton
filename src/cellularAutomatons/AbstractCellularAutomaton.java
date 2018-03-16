@@ -1,6 +1,6 @@
 package cellularAutomatons;
 
-public abstract class CellularAutomaton {
+public abstract class AbstractCellularAutomaton {
 	public abstract void encrypt();
 	public abstract void decrypt();
 	public abstract void getNextState(int alive, int i, int j, int [][]next);
