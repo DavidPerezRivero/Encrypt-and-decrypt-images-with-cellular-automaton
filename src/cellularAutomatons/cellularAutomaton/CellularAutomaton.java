@@ -8,6 +8,7 @@ import cellularAutomatons.AbstractCellularAutomaton;
 import cellularAutomatons.State;
 import window.panels.ButtonsPanel;
 import window.panels.ImagePanel;
+import window.panels.InfoPanel;
 
 public class CellularAutomaton extends AbstractCellularAutomaton {
 	private BufferedImage image;
@@ -50,14 +51,14 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			}
 		}
 	}
-	
+
 	private int[][] copyState(int[][] init, int[][] next) {
 		int[][] aux = new int[m][n];
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
 				aux[i][j] = next[i][j];
 			}
-		} 
+		}
 		return aux;
 	}
 
@@ -67,6 +68,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			@Override
 			public void run() {
 				for (int k = 0; k < ROUNDS; k++) {
+					InfoPanel.updateRound(k + 1);
 					ArrayList<Integer> aliveCell = new ArrayList<Integer>();
 					ArrayList<Integer> deadCell = new ArrayList<Integer>();
 					for (int i = 0; i < m; i++) {
@@ -110,7 +112,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			}
 		}
 	}
-	
+
 	// Game of Life's
 	public void getNextState(int alive, int i, int j, int[][] next) {
 		if ((bitInit[i][j]) == 0 && (alive == 3)) {
@@ -128,7 +130,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 		for (int r = RADIUS * -1 + i; r <= RADIUS + i; r++) {
 			for (int c = RADIUS * -1 + j; c <= RADIUS + j; c++) {
 				if (r != i && c != j) {
-					if (r >= 0 && r < m && c>=0 && c < n && bitInit[r][c] == 1) {
+					if (r >= 0 && r < m && c >= 0 && c < n && bitInit[r][c] == 1) {
 						alive++;
 					}
 				}
@@ -166,13 +168,14 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 
 			private void getImage() {
 				for (int k = 0; k < ROUNDS; k++) {
-				State state = states.get(ROUNDS - 1 - k);
+					InfoPanel.updateRound(k+1);
+					State state = states.get(ROUNDS - 1 - k);
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							state.getColors().add(image.getRGB(i, j));
 							if (state.getState()[i][j] == 1) {
 								state.increaseCount();
-							}							
+							}
 						}
 					}
 					for (int i = 0; i < m; i++) {

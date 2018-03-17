@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -31,7 +30,8 @@ public class ButtonsPanel extends JPanel {
 	private static JComboBox<Object> roundsSelection;
 	private static JComboBox<Object> radiusSelection;
 	private JSlider slider;
-	private final Integer[] ROUNDS = {1, 2, 3, 4};
+	private final Integer[] ROUNDS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	private final Integer[] RADIUS = {1,2,3,4};
 	private final int TTS_MIN = 0;
 	private final int TTS_MAX = 40;
 	private final int TTS_SPACING = 10;
@@ -45,7 +45,6 @@ public class ButtonsPanel extends JPanel {
 	
 	public ButtonsPanel() {
 		setLayout(new FlowLayout());
-		setBorder(BorderFactory.createLineBorder(Color.black));
 		setBackground(Color.LIGHT_GRAY);
 		inicializeComponents();
 		addComponents();
@@ -59,7 +58,7 @@ public class ButtonsPanel extends JPanel {
 		decrypt1Button = new JButton(DECRYPT_TEXT);
 		roundsSelection = new JComboBox<Object>(ROUNDS);
 		roundsSelection.setSelectedIndex(0);
-		radiusSelection = new JComboBox<Object>(ROUNDS);
+		radiusSelection = new JComboBox<Object>(RADIUS);
 		radiusSelection.setSelectedIndex(0);
 		slider = new JSlider(JSlider.HORIZONTAL, TTS_MIN, TTS_MAX, TTS_MIN);
 		slider.setMajorTickSpacing(TTS_SPACING);
@@ -128,7 +127,7 @@ public class ButtonsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				cellularAutomaton = new CellularAutomaton((BufferedImage) ImagePanel.image, 
 						ROUNDS[roundsSelection.getSelectedIndex()],
-						ROUNDS[radiusSelection.getSelectedIndex()],
+						RADIUS[radiusSelection.getSelectedIndex()],
 						slider.getValue());
 				encrypt1Button.setEnabled(false);
 				openButton.setEnabled(false);
