@@ -6,7 +6,6 @@ import java.util.Random;
 
 import cellularAutomatons.AbstractCellularAutomaton;
 import cellularAutomatons.State;
-import window.panels.ButtonsPanel;
 import window.panels.ImagePanel;
 import window.panels.InfoPanel;
 
@@ -18,8 +17,9 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	private int[][] nextState;
 	private int ROUNDS;
 	private int RADIUS;
-	public static int TTS;
-
+	private int TTS;
+	private boolean isWorking;
+	
 	public CellularAutomaton(BufferedImage image, int rounds, int radius, int tts) {
 		m = image.getWidth();
 		n = image.getHeight();
@@ -29,6 +29,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 		RADIUS = radius;
 		TTS = tts;
 		this.image = copyImage(image);
+		isWorking = false;
 	}
 
 	private BufferedImage copyImage(BufferedImage img) {
@@ -63,6 +64,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	}
 
 	public void encrypt() {
+		isWorking = true;
 		generateRandomMatrix();
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -94,7 +96,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 					}
 					setImage(copyImage(image));
 				}
-				ButtonsPanel.finishEncrypt();
+				isWorking = false;
 			}
 		});
 		t.start();
@@ -148,7 +150,6 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			public void run() {
 				getStates();
 				getImage();
-				ButtonsPanel.finishDecrypt();
 			}
 
 			private void getStates() {
@@ -193,5 +194,9 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			}
 		});
 		t.start();
+	}
+	
+	public boolean isWorking() {
+		return isWorking;
 	}
 }

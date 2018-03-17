@@ -30,4 +30,8 @@ public class ImagePanel extends JPanel {
         super.paint(g);
         super.repaint();
     }
+	
+	public BufferedImage getImage() {
+		return image;
+	}
 }

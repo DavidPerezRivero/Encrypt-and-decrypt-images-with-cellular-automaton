@@ -2,36 +2,25 @@ package window.panels;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import cellularAutomatons.cellularAutomaton.CellularAutomaton;
-import window.Window;
 
 public class ButtonsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private static JButton openButton;
-	private static JButton encrypt1Button;
-	private static JButton decrypt1Button;
-	CellularAutomaton cellularAutomaton;
-	private static JComboBox<Object> roundsSelection;
-	private static JComboBox<Object> radiusSelection;
+	private JButton openButton;
+	private JButton encryptButton;
+	private JButton decryptButton;
+	private JComboBox<Object> roundsComboBox;
+	private JComboBox<Object> radiusComboBox;
 	private JSlider slider;
-	private final Integer[] ROUNDS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	private final Integer[] RADIUS = {1,2,3,4};
+	private int sliderValue;
+	private int radiusValue;
+	private int roundsValue;
+	private final Integer[] ROUNDS = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	private final Integer[] RADIUS = { 1, 2, 3, 4 };
 	private final int TTS_MIN = 0;
 	private final int TTS_MAX = 40;
 	private final int TTS_SPACING = 10;
@@ -41,25 +30,27 @@ public class ButtonsPanel extends JPanel {
 	private final String ROUNDS_TEXT = "Rounds:";
 	private final String RADIUS_TEXT = "Radius:";
 	private final String TTS_TEXT = "Time to Sleep:";
-	
-	
+
 	public ButtonsPanel() {
-		setLayout(new FlowLayout());
-		setBackground(Color.LIGHT_GRAY);
+		configurePanel();
 		inicializeComponents();
 		addComponents();
-		addListeners();
 		setDefaultVisibility();
+	}
+
+	private void configurePanel() {
+		setLayout(new FlowLayout());
+		setBackground(Color.LIGHT_GRAY);
 	}
 
 	private void inicializeComponents() {
 		openButton = new JButton(OPEN_TEXT);
-		encrypt1Button = new JButton(ENCRYPT_TEXT);
-		decrypt1Button = new JButton(DECRYPT_TEXT);
-		roundsSelection = new JComboBox<Object>(ROUNDS);
-		roundsSelection.setSelectedIndex(0);
-		radiusSelection = new JComboBox<Object>(RADIUS);
-		radiusSelection.setSelectedIndex(0);
+		encryptButton = new JButton(ENCRYPT_TEXT);
+		decryptButton = new JButton(DECRYPT_TEXT);
+		roundsComboBox = new JComboBox<Object>(ROUNDS);
+		roundsComboBox.setSelectedIndex(0);
+		radiusComboBox = new JComboBox<Object>(RADIUS);
+		radiusComboBox.setSelectedIndex(0);
 		slider = new JSlider(JSlider.HORIZONTAL, TTS_MIN, TTS_MAX, TTS_MIN);
 		slider.setMajorTickSpacing(TTS_SPACING);
 		slider.setMinorTickSpacing(TTS_MIN);
@@ -69,98 +60,68 @@ public class ButtonsPanel extends JPanel {
 
 	private void addComponents() {
 		add(openButton);
-		add(encrypt1Button);
-		add(decrypt1Button);
+		add(encryptButton);
+		add(decryptButton);
 		add(new JLabel(ROUNDS_TEXT));
-		add(roundsSelection);
+		add(roundsComboBox);
 		add(new JLabel(RADIUS_TEXT));
-		add(radiusSelection);
+		add(radiusComboBox);
 		add(new JLabel(TTS_TEXT));
 		add(slider);
 	}
 
 	private void setDefaultVisibility() {
-		encrypt1Button.setEnabled(false);
-		decrypt1Button.setEnabled(false);
+		encryptButton.setEnabled(false);
+		decryptButton.setEnabled(false);
 		this.repaint();
 	}
-	
-	private void addListeners() {
-		addOpenButtonListener();
-		addEncryptButtonListener();
-		addDecryptButtonListener();
-		addSliderListener();
+
+	public int getTTS() {
+		return sliderValue;
 	}
 
-	private void addOpenButtonListener() {
-		openButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				openImage();
-			}
-		});
+	public int getRounds() {
+		return roundsValue;
 	}
-	
-	private void openImage() {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("/Users/"));
-		int result = fileChooser.showOpenDialog(this);
-		if (result == JFileChooser.APPROVE_OPTION) {
-		    File selectedFile = fileChooser.getSelectedFile();
-			try {
-				BufferedImage image = ImageIO.read(selectedFile);
-				if (image == null) {
-					openImage();
-				} else {
-					Window.openImage(image);
-					encrypt1Button.setEnabled(true);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+
+	public int getRadius() {
+		return radiusValue;
 	}
-	
-	private void addEncryptButtonListener() {
-		encrypt1Button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cellularAutomaton = new CellularAutomaton((BufferedImage) ImagePanel.image, 
-						ROUNDS[roundsSelection.getSelectedIndex()],
-						RADIUS[radiusSelection.getSelectedIndex()],
-						slider.getValue());
-				encrypt1Button.setEnabled(false);
-				openButton.setEnabled(false);
-				cellularAutomaton.encrypt();
-			}
-		});
+
+	public JButton getOpenButton() {
+		return openButton;
 	}
-	
-	public static void finishEncrypt() {
-		decrypt1Button.setEnabled(true);
+
+	public JButton getEncryptButton() {
+		return encryptButton;
 	}
-	
-	private void addDecryptButtonListener() {
-		decrypt1Button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cellularAutomaton.decrypt();
-				decrypt1Button.setEnabled(false);
-			}
-		});
+
+	public JButton getDecryptButton() {
+		return decryptButton;
 	}
-	
-	public static void finishDecrypt() {
-		encrypt1Button.setEnabled(true);
-		openButton.setEnabled(true);
+
+	public JComboBox<Object> getRadiusComboBox() {
+		return radiusComboBox;
 	}
-	
-	private void addSliderListener() {
-		slider.addChangeListener(new ChangeListener () {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				CellularAutomaton.TTS = slider.getValue();
-			}
-		});
+
+	public JComboBox<Object> getRoundsComboBox() {
+		return roundsComboBox;
 	}
+
+	public JSlider getSlider() {
+		return slider;
+	}
+
+	public void setSliderValue(int value) {
+		sliderValue = value;
+	}
+
+	public void setRoundsValue(int index) {
+		roundsValue = RADIUS[index];
+	}
+
+	public void setRadiusValue(int index) {
+		radiusValue = RADIUS[index];
+	}
+
 }
