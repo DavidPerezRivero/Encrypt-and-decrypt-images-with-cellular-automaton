@@ -15,21 +15,21 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	private int n;
 	private int[][] bitInit;
 	private int[][] nextState;
-	private int ROUNDS;
-	private int RADIUS;
-	private int TTS;
-	private boolean isWorking;
+	private int rounds;
+	private int radius;
+	public static int timeToSleep;
+	private long seed;
 	
-	public CellularAutomaton(BufferedImage image, int rounds, int radius, int tts) {
+	public CellularAutomaton(BufferedImage image, int rounds, int radius, int tts, long seed) {
 		m = image.getWidth();
 		n = image.getHeight();
 		bitInit = new int[m][n];
 		nextState = new int[m][n];
-		ROUNDS = rounds;
-		RADIUS = radius;
-		TTS = tts;
+		this.rounds = rounds;
+		this.radius = radius;
+		timeToSleep = tts;
+		this.seed = seed;
 		this.image = copyImage(image);
-		isWorking = false;
 	}
 
 	private BufferedImage copyImage(BufferedImage img) {
@@ -45,7 +45,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	private void generateRandomMatrix() {
 		bitInit = new int[m][n];
 		Random random = new Random();
-		random.setSeed(29121994);
+		random.setSeed(seed);
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
 				bitInit[i][j] = (random.nextBoolean()) ? 1 : 0;
@@ -64,12 +64,11 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	}
 
 	public void encrypt() {
-		isWorking = true;
 		generateRandomMatrix();
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				for (int k = 0; k < ROUNDS; k++) {
+				for (int k = 0; k < rounds; k++) {
 					InfoPanel.updateRound(k + 1);
 					ArrayList<Integer> aliveCell = new ArrayList<Integer>();
 					ArrayList<Integer> deadCell = new ArrayList<Integer>();
@@ -96,7 +95,6 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 					}
 					setImage(copyImage(image));
 				}
-				isWorking = false;
 			}
 		});
 		t.start();
@@ -107,7 +105,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			for (int j = 0; j < n; j++) {
 				ImagePanel.image.setRGB(i, j, image.getRGB(i, j));
 				try {
-					Thread.sleep(TTS);
+					Thread.sleep(timeToSleep);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -129,8 +127,8 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 	// Moore Neighborhood
 	public int getNumOfNeighborsAlive(int i, int j) {
 		int alive = 0;
-		for (int r = RADIUS * -1 + i; r <= RADIUS + i; r++) {
-			for (int c = RADIUS * -1 + j; c <= RADIUS + j; c++) {
+		for (int r = radius * -1 + i; r <= radius + i; r++) {
+			for (int c = radius * -1 + j; c <= radius + j; c++) {
 				if (r != i && c != j) {
 					if (r >= 0 && r < m && c >= 0 && c < n && bitInit[r][c] == 1) {
 						alive++;
@@ -155,7 +153,7 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			private void getStates() {
 				generateRandomMatrix();
 				nextState = new int[m][n];
-				for (int k = 0; k < ROUNDS; k++) {
+				for (int k = 0; k < rounds; k++) {
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							int alive = getNumOfNeighborsAlive(i, j);
@@ -168,9 +166,9 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			}
 
 			private void getImage() {
-				for (int k = 0; k < ROUNDS; k++) {
+				for (int k = 0; k < rounds; k++) {
 					InfoPanel.updateRound(k+1);
-					State state = states.get(ROUNDS - 1 - k);
+					State state = states.get(rounds - 1 - k);
 					for (int i = 0; i < m; i++) {
 						for (int j = 0; j < n; j++) {
 							state.getColors().add(image.getRGB(i, j));
@@ -194,9 +192,5 @@ public class CellularAutomaton extends AbstractCellularAutomaton {
 			}
 		});
 		t.start();
-	}
-	
-	public boolean isWorking() {
-		return isWorking;
 	}
 }

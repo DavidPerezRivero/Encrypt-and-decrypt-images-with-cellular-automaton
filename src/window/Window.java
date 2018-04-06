@@ -75,8 +75,8 @@ public class Window extends JFrame {
 		return buttonsPanel.getTTS();
 	}
 
-	public JButton getOpenButton() {
-		return buttonsPanel.getOpenButton();
+	public JButton getOpenToEncryptButton() {
+		return buttonsPanel.getOpenToEncryptButton();
 	}
 
 	public JButton getEncryptButton() {
@@ -109,5 +109,49 @@ public class Window extends JFrame {
 
 	public void setRadiusValue(int index) {
 		buttonsPanel.setRadiusValue(index);
+	}
+
+	public JButton getSaveEncryptedButton() {
+		return buttonsPanel.getSaveEncryptedButton();
+	}
+	
+	public JButton getSaveDecryptedButton() {
+		return buttonsPanel.getSaveDecryptedButton();
+	}
+
+	public JButton getOpenToDecryptButton() {
+		return buttonsPanel.getOpenToDecryptButton();
+	}
+	
+	public void openToEncrypt() {
+		buttonsPanel.openToEncrypt();
+	}
+	
+	public void encrypt() {
+		buttonsPanel.encrypt();
+	}
+	
+	public void openToDecrypt() {
+		buttonsPanel.openToDecrypt();
+	}
+	
+	public void decrypt() {
+		buttonsPanel.decrypt();
+	}
+	
+	public void saveDecryptedImage() {
+		buttonsPanel.saveDecryptedImage();
+	}
+	
+	public void saveEncryptedImage() {
+		buttonsPanel.saveEncryptedImage();
+	}
+	
+	public long getSeed() {
+		return buttonsPanel.getSeed();
+	}
+	
+	public void setSeed(String seed) {
+		buttonsPanel.setSeed(seed);
 	}
 }

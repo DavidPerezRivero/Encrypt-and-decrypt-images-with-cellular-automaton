@@ -5,29 +5,39 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cellularAutomatons.cellularAutomaton.CellularAutomaton;
+import encryptText.EncryptAndDecryptText;
 import window.Window;
 
 public class Runnable {
 	private Window window;
 	private CellularAutomaton automaton;
+	private final String PATH = "/Users/";
+	private final String PATH_TO_SAVE_ENCRYPTED_IMG = "/Users/davidperezrivero/encrypt.png";
+	private final String PATH_TO_SAVE_DECRYPTED_IMG = "/Users/davidperezrivero/decrypt.png";
+	private final String PATH_TO_SAVE_TXT = "/Users/davidperezrivero/encrypt.txt";
+	private final String ONLY_IMAGES = "Only Images";
+	private final String ONLY_TEXT = "Only Text";
+	private final String PNG = "png";
+	private final String JPG = "jpg";
+	private final String TXT = "txt";
 
 	public Runnable() {
 		createWindow();
 	}
 
 	private void createCellularAutomaton() {
-		System.out.println(window.getRounds() + "     " + window.getTTS() + "    "+ window.getRadius());
-		automaton = new CellularAutomaton(window.getImage(), window.getRounds(), window.getRadius(), window.getTTS());
+		automaton = new CellularAutomaton(window.getImage(), window.getRounds(), 
+				window.getRadius(), window.getTTS(), window.getSeed());
 	}
 
 	private void createWindow() {
@@ -46,64 +56,135 @@ public class Runnable {
 	}
 
 	private void addListeners() {
-		addOpenButtonListener(window.getOpenButton(), window.getEncryptButton());
-		addDecryptButtonListener(window.getDecryptButton(), window.getEncryptButton(), window.getOpenButton());
+		addOpenToEncryptButtonListener(window);
+		addOpenToDecryptButtonListener(window);
+		addDecryptButtonListener(window);
+		addEncryptButtonListener(window);
+		addSaveEncryptedButtonListener(window);
+		addSaveDecryptedButtonListener(window);
 		addSliderListener(window.getSlider());
 		addRadiusComboBoxListener(window.getRadiusComboBox());
 		addRoundsComboBoxListener(window.getRoundsComboBox());
-		addEncryptButtonListener(window.getEncryptButton(), window.getOpenButton(), window.getDecryptButton());
 	}
-
-	private void addOpenButtonListener(JButton openButton, JButton encryptButton) {
-		openButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				openImage(encryptButton);
-			}
-		});
-	}
-
-	private void openImage(JButton encryptButton) {
+	
+	private void openImage() {
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("/Users/"));
+		FileFilter filter = new FileNameExtensionFilter(ONLY_IMAGES, PNG, JPG);
+		fileChooser.setFileFilter(filter);
+		fileChooser.setCurrentDirectory(new File(PATH));
 		int result = fileChooser.showOpenDialog(window);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
 			try {
 				BufferedImage image = ImageIO.read(selectedFile);
 				if (image == null) {
-					openImage(encryptButton);
+					openImage();
 				} else {
 					window.openImage(image);
-					encryptButton.setEnabled(true);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	private void addEncryptButtonListener(JButton encryptButton, JButton openButton, JButton decryptButton) {
-		encryptButton.addActionListener(new ActionListener() {
+	
+	protected void saveImage(String path, Window window) {
+		File outputImg = new File(PATH_TO_SAVE_ENCRYPTED_IMG);
+		try {
+			ImageIO.write(window.getImage(), PNG, outputImg);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void addOpenToEncryptButtonListener(Window window) {
+		window.getOpenToEncryptButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				createCellularAutomaton();
-				automaton.encrypt();
-				encryptButton.setEnabled(false);
-				openButton.setEnabled(false);
-				decryptButton.setEnabled(true);
+				openImage();
+				window.openToEncrypt();
 			}
 		});
 	}
 
-	private void addDecryptButtonListener(JButton decryptButton, JButton encryptButton, JButton openButton) {
-		decryptButton.addActionListener(new ActionListener() {
+	private void addOpenToDecryptButtonListener(Window window) {
+		window.getOpenToDecryptButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				openImage();
+				openTxt(window);
+				createCellularAutomaton();
+				window.openToDecrypt();
+			}
+
+			private void openTxt(Window window) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setCurrentDirectory(new File(PATH));
+				FileFilter filter = new FileNameExtensionFilter(ONLY_TEXT, TXT);
+				fileChooser.setFileFilter(filter);
+				int result = fileChooser.showOpenDialog(window);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					// Instanciar descifrador
+					EncryptAndDecryptText edt = new EncryptAndDecryptText();
+					edt.readFile(window, selectedFile);
+				}
+			}
+		});
+	}
+
+	private void addSaveEncryptedButtonListener(Window window) {
+		window.getSaveEncryptedButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					saveImage(PATH_TO_SAVE_ENCRYPTED_IMG, window);
+					saveText(PATH_TO_SAVE_TXT, window);
+					window.saveEncryptedImage();
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+			
+			protected void saveText(String path, Window window) {
+				EncryptAndDecryptText edt = new EncryptAndDecryptText();
+				edt.writeFile(window, path);
+			}
+		});
+	}
+
+	private void addSaveDecryptedButtonListener(Window window) {
+		window.getSaveDecryptedButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					File outputImg = new File(PATH_TO_SAVE_DECRYPTED_IMG);
+					ImageIO.write(window.getImage(), PNG, outputImg);
+					window.saveDecryptedImage();
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void addEncryptButtonListener(Window window) {
+		window.getEncryptButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				window.encrypt();
+				createCellularAutomaton();
+				automaton.encrypt();
+			}
+		});
+	}
+
+	private void addDecryptButtonListener(Window window) {
+		window.getDecryptButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				window.decrypt();
 				automaton.decrypt();
-				decryptButton.setEnabled(false);
-				encryptButton.setEnabled(true);
-				openButton.setEnabled(true);
 			}
 		});
 	}
@@ -113,6 +194,7 @@ public class Runnable {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				window.setSliderValue(slider.getValue());
+				CellularAutomaton.timeToSleep = slider.getValue();
 			}
 		});
 	}
