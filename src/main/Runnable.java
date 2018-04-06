@@ -21,10 +21,10 @@ import window.Window;
 public class Runnable {
 	private Window window;
 	private CellularAutomaton automaton;
-	private final String PATH = "/Users/";
-	private final String PATH_TO_SAVE_ENCRYPTED_IMG = "/Users/davidperezrivero/encrypt.png";
-	private final String PATH_TO_SAVE_DECRYPTED_IMG = "/Users/davidperezrivero/decrypt.png";
-	private final String PATH_TO_SAVE_TXT = "/Users/davidperezrivero/encrypt.txt";
+	private final String PATH = "/Users/" + System.getProperty("user.name");
+	private final String PATH_TO_SAVE_ENCRYPTED_IMG = "/Users/" + System.getProperty("user.name") + "/encrypt.png";
+	private final String PATH_TO_SAVE_DECRYPTED_IMG = "/Users/" + System.getProperty("user.name") + "/decrypt.png";
+	private final String PATH_TO_SAVE_TXT = "/Users/" + System.getProperty("user.name") + "encrypt.txt";
 	private final String ONLY_IMAGES = "Only Images";
 	private final String ONLY_TEXT = "Only Text";
 	private final String PNG = "png";
