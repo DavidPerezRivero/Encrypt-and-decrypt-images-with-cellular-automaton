@@ -21,10 +21,10 @@ import window.Window;
 public class Runnable {
 	private Window window;
 	private CellularAutomaton automaton;
-	private final String PATH = "/Users/" + System.getProperty("user.name");
-	private final String PATH_TO_SAVE_ENCRYPTED_IMG = "/Users/" + System.getProperty("user.name") + "/encrypt.png";
-	private final String PATH_TO_SAVE_DECRYPTED_IMG = "/Users/" + System.getProperty("user.name") + "/decrypt.png";
-	private final String PATH_TO_SAVE_TXT = "/Users/" + System.getProperty("user.name") + "encrypt.txt";
+	private String PATH = "/Users/" + System.getProperty("user.name");
+	private String PATH_TO_SAVE_ENCRYPTED_IMG = PATH + "/encrypt.png";
+	private String PATH_TO_SAVE_DECRYPTED_IMG = PATH + "/decrypt.png";
+	private String PATH_TO_SAVE_TXT = PATH + "/encrypt.txt";
 	private final String ONLY_IMAGES = "Only Images";
 	private final String ONLY_TEXT = "Only Text";
 	private final String PNG = "png";
@@ -33,6 +33,12 @@ public class Runnable {
 
 	public Runnable() {
 		createWindow();
+		if (System.getProperty("os.name").contains("Windows")) {
+			PATH = "C:/Documents and Settings";
+			PATH_TO_SAVE_ENCRYPTED_IMG = PATH + "/encrypt.png";
+			PATH_TO_SAVE_DECRYPTED_IMG = PATH + "/decrypt.png";
+			PATH_TO_SAVE_TXT = PATH + "/encrypt.txt";
+		}
 	}
 
 	private void createCellularAutomaton() {
