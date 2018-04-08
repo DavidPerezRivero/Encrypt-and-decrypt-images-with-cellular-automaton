@@ -18,11 +18,18 @@ public class ImagePanel extends JPanel {
 		super();
 	}
 	
+	/**
+	 * Establece la imagen 
+	 * @param image
+	 */
 	public void setImagePanel(BufferedImage image) {
 		this.setLayout(new GridLayout(image.getWidth(), image.getHeight()));
 		ImagePanel.image = image;
 	}
 	
+	/**
+	 * Pinta la imagen
+	 */
 	@Override
     public void paint(Graphics g) {
         g.drawImage((Image) image, 0, 0, getWidth(), getHeight(), this);

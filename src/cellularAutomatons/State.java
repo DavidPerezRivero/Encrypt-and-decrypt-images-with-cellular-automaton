@@ -2,10 +2,15 @@ package cellularAutomatons;
 
 import java.util.ArrayList;
 
+/**
+ * Clase utilizada como estructura de datos para almacenar
+ * la informacion de los estados generados en el proceso
+ * de descencriptacion
+ */
 public class State {
-	private int[][] state;
-	private int count;
-	private ArrayList<Integer> colors;
+	private int[][] state;				// Estado de cada celula
+	private int count;					// Contador de celulas vivas
+	private ArrayList<Integer> colors;	// Colores de la imagen
 
 	public State(int[][] state, int count, ArrayList<Integer> colorCells) {
 		this.state = state;

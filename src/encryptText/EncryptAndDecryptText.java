@@ -19,12 +19,27 @@ import javax.crypto.spec.SecretKeySpec;
 
 import window.Window;
 
+/**
+ * Clase para encriptar y descencriptar el texto.
+ * Utilizada para escribir el fichero con los parametros
+ * necesarios para descencriptar la imagen.
+ */
 public class EncryptAndDecryptText {
 	private final String UTF_8 = "UTF-8";
 
+	/**
+	 * Constructor
+	 */
 	public EncryptAndDecryptText() {
 	}
 
+	/**
+	 * Devuelve el encriptador o descencriptador, segun la opcion pasada como parametro
+	 * @param option
+	 * @param window
+	 * @param seed
+	 * @return
+	 */
 	public Cipher getCipher(boolean option, Window window, String seed) {
 		try {
 			final String seedKey = seed;
@@ -45,6 +60,11 @@ public class EncryptAndDecryptText {
 		}
 	}
 
+	/**
+	 * Lee el fichero, descencripta y establece los parametros.
+	 * @param window
+	 * @param selectedFile
+	 */
 	public void readFile(Window window, File selectedFile) {
 		try {
 			// Leyendo fichero
@@ -75,6 +95,11 @@ public class EncryptAndDecryptText {
 		}
 	}
 
+	/**
+	 * Escribe el fichero con los parametros encriptados
+	 * @param window
+	 * @param path
+	 */
 	public void writeFile(Window window, String path) {
 		try {
 			// Datos a encriptar

@@ -15,6 +15,10 @@ import window.panels.ButtonsPanel;
 import window.panels.ImagePanel;
 import window.panels.InfoPanel;
 
+/**
+ * Ventana del programa
+ *
+ */
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private ButtonsPanel buttonsPanel;
@@ -24,6 +28,9 @@ public class Window extends JFrame {
 	private final int WINDOW_WIDTH = 1300;
 	private final int WINDOW_HEIGHT = 1000;
 
+	/**
+	 * Constructor de la ventana
+	 */
 	public Window() {
 		super();
 		configureWindow();
@@ -31,6 +38,9 @@ public class Window extends JFrame {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
+	/**
+	 * Configuracion de la ventana
+	 */
 	private void configureWindow() {
 		setTitle(CELLULAR_TEXT);
 		setResizable(true);
@@ -41,6 +51,9 @@ public class Window extends JFrame {
 		setLocationRelativeTo(null);
 	}
 
+	/**
+	 * Inicializa los distintos paneles que componen la ventana
+	 */
 	private void inicializeComponents() {
 		JPanel container = new JPanel();
 		container.setLayout(new BorderLayout());

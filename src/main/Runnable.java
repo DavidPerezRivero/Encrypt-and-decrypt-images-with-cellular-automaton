@@ -19,33 +19,63 @@ import encryptText.EncryptAndDecryptText;
 import window.Window;
 
 public class Runnable {
+	// ventana de la aplicación
 	private Window window;
+	// automata celular para encriptar y descencriptar la imagen
 	private CellularAutomaton automaton;
-	private String PATH = "/Users/" + System.getProperty("user.name");
-	private String PATH_TO_SAVE_ENCRYPTED_IMG = PATH + "/encrypt.png";
-	private String PATH_TO_SAVE_DECRYPTED_IMG = PATH + "/decrypt.png";
-	private String PATH_TO_SAVE_TXT = PATH + "/encrypt.txt";
+	// Textos a utilizar
+	private String PATH;
+	private String PATH_TO_SAVE_ENCRYPTED_IMG;
+	private String PATH_TO_SAVE_DECRYPTED_IMG;
+	private String PATH_TO_SAVE_TXT;
 	private final String ONLY_IMAGES = "Only Images";
 	private final String ONLY_TEXT = "Only Text";
 	private final String PNG = "png";
 	private final String JPG = "jpg";
 	private final String TXT = "txt";
+	private final String ENCRYPT_IMAGE = "/encrypt.png";
+	private final String DECRYPT_IMAGE = "/decrypt.png";
+	private final String ENCRYPT_TXT = "/encrypt.txt";
+	private final String NEW_DIR = "/EncryptDecryptImages";
 
+	/**
+	 * Constructor que establece las rutas a utilizar por la aplicación
+	 * y crea la ventana.
+	 */
 	public Runnable() {
+		setCurrentPath();
 		createWindow();
+	}
+	
+	/**
+	 * Establece las rutas a utilizar dependiendo del sistema operativo
+	 */
+	public void setCurrentPath() {
 		if (System.getProperty("os.name").contains("Windows")) {
-			PATH = "C:/Documents and Settings";
-			PATH_TO_SAVE_ENCRYPTED_IMG = PATH + "/encrypt.png";
-			PATH_TO_SAVE_DECRYPTED_IMG = PATH + "/decrypt.png";
-			PATH_TO_SAVE_TXT = PATH + "/encrypt.txt";
+			PATH = System.getProperty("user.dir") + NEW_DIR;
+		} else {
+			PATH = "/Users/" + System.getProperty("user.name") + NEW_DIR;
 		}
+		File dir = new File(PATH);
+		if (!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+		PATH_TO_SAVE_ENCRYPTED_IMG = PATH + ENCRYPT_IMAGE;
+		PATH_TO_SAVE_DECRYPTED_IMG = PATH + DECRYPT_IMAGE;
+		PATH_TO_SAVE_TXT = PATH + ENCRYPT_TXT;
 	}
 
+	/**
+	 * Crea un automata celular
+	 */
 	private void createCellularAutomaton() {
-		automaton = new CellularAutomaton(window.getImage(), window.getRounds(), 
-				window.getRadius(), window.getTTS(), window.getSeed());
+		automaton = new CellularAutomaton(window.getImage(), window.getRounds(), window.getRadius(), window.getTTS(),
+				window.getSeed());
 	}
 
+	/**
+	 * Crea la ventana 
+	 */
 	private void createWindow() {
 		window = new Window();
 		window.setSliderValue(0);
@@ -61,6 +91,9 @@ public class Runnable {
 		}
 	}
 
+	/**
+	 * Establece escuchas a los botones de la ventana y a los parametros
+	 */
 	private void addListeners() {
 		addOpenToEncryptButtonListener(window);
 		addOpenToDecryptButtonListener(window);
@@ -72,7 +105,10 @@ public class Runnable {
 		addRadiusComboBoxListener(window.getRadiusComboBox());
 		addRoundsComboBoxListener(window.getRoundsComboBox());
 	}
-	
+
+	/**
+	 * Abre una imagen seleccionada por el usuario y la muestra
+	 */
 	private void openImage() {
 		JFileChooser fileChooser = new JFileChooser();
 		FileFilter filter = new FileNameExtensionFilter(ONLY_IMAGES, PNG, JPG);
@@ -93,7 +129,12 @@ public class Runnable {
 			}
 		}
 	}
-	
+
+	/**
+	 * Almacena la imagen que se muestra en la pantalla
+	 * @param path
+	 * @param window
+	 */
 	protected void saveImage(String path, Window window) {
 		File outputImg = new File(PATH_TO_SAVE_ENCRYPTED_IMG);
 		try {
@@ -102,7 +143,11 @@ public class Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Escucha del boton para abrir una imagen para encriptarla
+	 * @param window
+	 */
 	private void addOpenToEncryptButtonListener(Window window) {
 		window.getOpenToEncryptButton().addActionListener(new ActionListener() {
 			@Override
@@ -113,17 +158,29 @@ public class Runnable {
 		});
 	}
 
+	/**
+	 * Escucha del boton para abrir una imagen para descencriptarla.
+	 * @param window
+	 */
 	private void addOpenToDecryptButtonListener(Window window) {
 		window.getOpenToDecryptButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// abre la imagen
 				openImage();
-				openTxt(window);
+				// abre el fichero de texto con los parametros
+				openTxt();
+				// crea un automata celular
 				createCellularAutomaton();
 				window.openToDecrypt();
 			}
 
-			private void openTxt(Window window) {
+			/**
+			 * Abre el fichero de texto que contiene los parametros
+			 * necesarios para descencriptar la imagen abierta 
+			 * previamente
+			 */
+			private void openTxt() {
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setCurrentDirectory(new File(PATH));
 				FileFilter filter = new FileNameExtensionFilter(ONLY_TEXT, TXT);
@@ -138,7 +195,12 @@ public class Runnable {
 			}
 		});
 	}
-
+	
+	/**
+	 * Escucha del boton que guarda la imagen encriptada y el texto con los
+	 * parametros
+	 * @param window
+	 */
 	private void addSaveEncryptedButtonListener(Window window) {
 		window.getSaveEncryptedButton().addActionListener(new ActionListener() {
 			@Override
@@ -151,7 +213,7 @@ public class Runnable {
 					error.printStackTrace();
 				}
 			}
-			
+
 			protected void saveText(String path, Window window) {
 				EncryptAndDecryptText edt = new EncryptAndDecryptText();
 				edt.writeFile(window, path);
@@ -159,6 +221,10 @@ public class Runnable {
 		});
 	}
 
+	/**
+	 * Escucha del boton que guarda la imagen descencriptada
+	 * @param window
+	 */
 	private void addSaveDecryptedButtonListener(Window window) {
 		window.getSaveDecryptedButton().addActionListener(new ActionListener() {
 			@Override
@@ -174,17 +240,26 @@ public class Runnable {
 		});
 	}
 
+	/**
+	 * Escucha del boton para encriptar la imagen
+	 * @param window
+	 */
 	private void addEncryptButtonListener(Window window) {
 		window.getEncryptButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				window.encrypt();
+				// Crea un automata celular y ejecuta la encriptacion
 				createCellularAutomaton();
 				automaton.encrypt();
 			}
 		});
 	}
 
+	/**
+	 * Escucha del boton para encriptar la imagen
+	 * @param window
+	 */
 	private void addDecryptButtonListener(Window window) {
 		window.getDecryptButton().addActionListener(new ActionListener() {
 			@Override
@@ -195,6 +270,10 @@ public class Runnable {
 		});
 	}
 
+	/**
+	 * Escucha del deslizador para ajustar la velocidad del algoritmo
+	 * @param slider
+	 */
 	private void addSliderListener(JSlider slider) {
 		slider.addChangeListener(new ChangeListener() {
 			@Override
@@ -205,6 +284,10 @@ public class Runnable {
 		});
 	}
 
+	/**
+	 * Escucha del combobox para ajustar el numero de rondas a ejecutar el algoritmo
+	 * @param roundsComboBox
+	 */
 	private void addRoundsComboBoxListener(JComboBox<Object> roundsComboBox) {
 		roundsComboBox.addActionListener(new ActionListener() {
 			@Override
@@ -215,6 +298,10 @@ public class Runnable {
 
 	}
 
+	/**
+	 * Escucha del combobox para ajustar el radio de la vencidad de cada celula
+	 * @param radiusComboBox
+	 */
 	private void addRadiusComboBoxListener(JComboBox<Object> radiusComboBox) {
 		radiusComboBox.addActionListener(new ActionListener() {
 			@Override

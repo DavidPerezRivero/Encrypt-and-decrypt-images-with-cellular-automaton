@@ -45,6 +45,9 @@ public class ButtonsPanel extends JPanel {
 	private final String SAVE_DECRYPTED_TEXT = "Save Decrypted Image";
 	private final String SEED_TEXT = "Seed:";
 
+	/**
+	 * Constructor del panel
+	 */
 	public ButtonsPanel() {
 		configurePanel();
 		inicializeComponents();
@@ -53,11 +56,17 @@ public class ButtonsPanel extends JPanel {
 		setDefaultVisibility();
 	}
 
+	/**
+	 * Configura el panel
+	 */
 	private void configurePanel() {
 		setLayout(new FlowLayout());
 		setBackground(Color.LIGHT_GRAY);
 	}
 
+	/**
+	 * Inicializa los componentes del panel
+	 */
 	private void inicializeComponents() {
 		openToEncryptButton = new JButton(OPEN_TO_ENCRYPT_TEXT);
 		openToDecryptButton = new JButton(OPEN_TO_DECRYPT_TEXT);
@@ -78,12 +87,9 @@ public class ButtonsPanel extends JPanel {
 		seedText.setText(DEFAULT_SEED);
 	}
 	
-	private void inicializeParameters() {
-		sliderValue = 0;
-		radiusValue = 0;
-		roundsValue = 0;
-	}
-
+	/**
+	 * Añade los distintos elementos al panel
+	 */
 	private void addComponents() {
 		add(openToEncryptButton);
 		add(openToDecryptButton);
@@ -100,7 +106,22 @@ public class ButtonsPanel extends JPanel {
 		add(new JLabel(TTS_TEXT));
 		add(slider);
 	}
+	
+	/**
+	 * Inicializa los parametros
+	 */
+	private void inicializeParameters() {
+		sliderValue = 0;
+		radiusValue = 0;
+		roundsValue = 0;
+	}
 
+	
+	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	private void setDefaultVisibility() {
 		encryptButton.setVisible(false);
 		decryptButton.setVisible(false);
@@ -109,6 +130,10 @@ public class ButtonsPanel extends JPanel {
 		this.repaint();
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void openToEncrypt() {
 		openToEncryptButton.setVisible(false);
 		openToDecryptButton.setVisible(false);
@@ -120,6 +145,10 @@ public class ButtonsPanel extends JPanel {
 		seedText.setEnabled(true);
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void openToDecrypt() {
 		openToEncryptButton.setVisible(false);
 		openToDecryptButton.setVisible(false);
@@ -131,6 +160,10 @@ public class ButtonsPanel extends JPanel {
 		seedText.setEnabled(false);
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void encrypt() {
 		saveEncryptedButton.setEnabled(true);
 		saveEncryptedButton.setVisible(true);
@@ -142,6 +175,10 @@ public class ButtonsPanel extends JPanel {
 		seedText.setEnabled(false);
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void decrypt() {
 		saveDecryptedButton.setEnabled(true);
 		saveDecryptedButton.setVisible(true);
@@ -154,10 +191,18 @@ public class ButtonsPanel extends JPanel {
 		seedText.setEnabled(false);
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void saveEncryptedImage() {
 		saveEncryptedButton.setEnabled(false);
 	}
 	
+	/**
+	 * Establece la visibilidad de los botones y la
+	 * posibilidad de modificar los parametros
+	 */
 	public void saveDecryptedImage() {
 		saveDecryptedButton.setEnabled(false);
 	}
