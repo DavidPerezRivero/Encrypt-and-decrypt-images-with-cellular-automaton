@@ -20,9 +20,8 @@ import javax.crypto.spec.SecretKeySpec;
 import window.Window;
 
 /**
- * Clase para encriptar y descencriptar el texto.
- * Utilizada para escribir el fichero con los parametros
- * necesarios para descencriptar la imagen.
+ * Clase para encriptar y descencriptar el texto. Utilizada para escribir el
+ * fichero con los parametros necesarios para descencriptar la imagen.
  */
 public class EncryptAndDecryptText {
 	private final String UTF_8 = "UTF-8";
@@ -34,15 +33,18 @@ public class EncryptAndDecryptText {
 	}
 
 	/**
-	 * Devuelve el encriptador o descencriptador, segun la opcion pasada como parametro
+	 * Devuelve el encriptador o descencriptador, segun la opcion pasada como
+	 * parametro
+	 * 
 	 * @param option
 	 * @param window
 	 * @param seed
 	 * @return
 	 */
-	public Cipher getCipher(boolean option, Window window, String seed) {
+	public Cipher getCipher(boolean option, Window window) {
 		try {
-			final String seedKey = seed;
+			final String seedKey = String.valueOf(window.getImage().getWidth() 
+					+ window.getImage().getHeight());
 			MessageDigest digest = MessageDigest.getInstance("SHA");
 			digest.update(seedKey.getBytes(UTF_8));
 			final SecretKeySpec key = new SecretKeySpec(digest.digest(), 0, 16, "AES");
@@ -62,19 +64,37 @@ public class EncryptAndDecryptText {
 
 	/**
 	 * Lee el fichero, descencripta y establece los parametros.
+	 * 
 	 * @param window
 	 * @param selectedFile
 	 */
 	public void readFile(Window window, File selectedFile) {
+		// Instanciando descencriptador
+		Cipher aes = getCipher(false, window);
+		// Leyendo fichero
+		BufferedReader br;
+		String radius = "";
+		String rounds = "";
+		String seed = "";
 		try {
-			// Leyendo fichero
-			BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-			String radius = br.readLine();
-			String rounds = br.readLine();
-			String seed = br.readLine();
+			br = new BufferedReader(new FileReader(selectedFile));
+			radius = br.readLine();
+			rounds = br.readLine();
+			seed = br.readLine();
 			br.close();
-			// Instanciando descencriptador
-			Cipher aes = getCipher(false, window, seed);
+			while (radius.getBytes().length % 16 != 0) {
+				radius = "0" + radius;
+			}
+			while (rounds.getBytes().length % 16 != 0) {
+				rounds = "0" + rounds;
+			}
+			while (seed.getBytes().length % 16 != 0) {
+				seed = "0" + seed;
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
 			// Descencriptando radio
 			byte[] b = radius.getBytes();
 			byte[] bytes = aes.doFinal(b);
@@ -91,12 +111,12 @@ public class EncryptAndDecryptText {
 			String seedDecrypted = new String(bytes, UTF_8);
 			window.setSeed(seedDecrypted);
 		} catch (IOException | IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Escribe el fichero con los parametros encriptados
+	 * 
 	 * @param window
 	 * @param path
 	 */
@@ -107,24 +127,23 @@ public class EncryptAndDecryptText {
 			String rounds = String.valueOf(window.getRoundsComboBox().getSelectedIndex());
 			String seed = String.valueOf(window.getSeed());
 			// Instanciando encifrador y variables para escribir fichero
-			Cipher aes = getCipher(true, window, seed);
+			Cipher aes = getCipher(true, window);
 			FileWriter file = new FileWriter(path);
 			PrintWriter pw = new PrintWriter(file);
 			// Cifrando radius
 			byte[] bytes = radius.getBytes(UTF_8);
 			byte[] cifrado = aes.doFinal(bytes);
 			String stringEncrypted = new String(cifrado);
+			pw.println(stringEncrypted);
 			// Cifrando radius
 			bytes = rounds.getBytes(UTF_8);
 			cifrado = aes.doFinal(bytes);
 			stringEncrypted = new String(cifrado);
+			pw.println(stringEncrypted);
 			// Cifrando radius
 			bytes = seed.getBytes(UTF_8);
 			cifrado = aes.doFinal(bytes);
 			stringEncrypted = new String(cifrado);
-			// Escribir fichero
-			pw.println(stringEncrypted);
-			pw.println(stringEncrypted);
 			pw.println(stringEncrypted);
 			file.close();
 		} catch (IOException | IllegalBlockSizeException | BadPaddingException e) {
